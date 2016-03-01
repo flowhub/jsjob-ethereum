@@ -16,7 +16,7 @@ Download and install [go-ethereum](https://github.com/ethereum/go-ethereum).
 
 ## Running
 
-Start an Ethereum client, with JSON-RCP enabled. 
+Start an Ethereum client, with JSON-RPC enabled. 
 
     geth --rpc --fast
 
