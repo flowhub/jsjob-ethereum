@@ -8,6 +8,22 @@
 
 **Note: some of this will be moved into its own open source project when we know what the pieces are.**
 
+## Installing
+
+Download and install [go-ethereum](https://github.com/ethereum/go-ethereum).
+
+    npm install
+
+## Running
+
+Start an Ethereum client, with JSON-RCP enabled. 
+
+    geth --rpc --fast
+
+Run tests
+
+    ./truffle test
+
 ## Architecture
 
 Contracts
