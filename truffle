@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Replicated crack from truffle bash script to work with non-global NPM install
+# See https://github.com/ConsenSys/truffle/issues/101
+export TRUFFLE_WORKING_DIRECTORY=`pwd`;
+export TRUFFLE_NPM_LOCATION=`pwd`/node_modules/truffle;
+
+# Hack. babel-node will clobber -e, and it doesn't look like `--` will stop it.
+# Because we're doing string replacement, we have to take edge cases into account.
+args=" $@"
+args=${args// -e / --environment }
+args=${args// -e=/ --environment=}
+args=${args// -environment/ --environment}
+
+cd ${TRUFFLE_NPM_LOCATION}
+./node_modules/.bin/babel-node ./truffle.es6 -- ${args}
+
+
+
