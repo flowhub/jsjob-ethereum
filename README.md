@@ -12,7 +12,7 @@
 
 Contracts
 
-* Job: input data (IFPS hash), code (IPFS hash, to some JavaScript), result (IPFS hash).
+* Job: input data (IPFS hash), code (IPFS hash, to some JavaScript), result (IPFS hash).
 * Agency: Posts new `Job`s, by logging them
 * Agent: Subscribed to `Agency`, waiting for new `Job` to perform.
 
