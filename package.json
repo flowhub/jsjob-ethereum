@@ -7,11 +7,10 @@
     "truffle": "^0.3.1"
   },
   "devDependencies": {
-    "mocha": "^2.4.5",
     "truffle": "^0.3.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "./truffle test"
   },
   "repository": {
     "type": "git",
