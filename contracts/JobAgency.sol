@@ -20,11 +20,7 @@ contract JobAgency {
     return jobs.length;
   }
 
-  function getJobData(uint id) returns(byte[46] code, byte[46] input) {
-    var job = jobs[id];
-    return (job.code, job.input);
-  }
-
+  // XXX: returning a tuple makes the second bytearray filled with 00??
   function getJobCode(uint id) returns(byte[46]) {
     return jobs[id].code;
   }

@@ -45,7 +45,7 @@ contract 'JobAgency', (accounts) ->
 
     it 'new Job should have input and code hashes', (done) ->
       agency = JobAgency.deployed()
-      agency.getJobCode.call(1)
+      agency.getJobData.call(1)
       .then (d) ->
         assert.equal codeHash, toStr(d)
       .then () ->
