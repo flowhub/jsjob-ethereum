@@ -18,7 +18,7 @@ contract 'JobAgency', (accounts) ->
 
     it 'should emit JobPosted event', (done) ->
       agency = JobAgency.deployed()
-      e = agency.JobPosteusd()
+      e = agency.JobPosted()
       e.watch (err, event) ->
         return done err if err
         assert.equal event.args.jobId, 2
