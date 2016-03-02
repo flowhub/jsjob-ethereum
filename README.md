@@ -71,6 +71,7 @@ Proof-of-concept
 Solving capable
 
 * Remove database access from Solve worker
+* Port Poly to use the defined worker plugin interface
 
 Production ready
 
@@ -93,7 +94,7 @@ Distributed ready
 
 ## Security
 
-Brainstorming here...
+`Brainstorming here...`
 
 Attacker returning bad results could
 
