@@ -64,6 +64,12 @@ Production ready
 * Integration on apis
 * Dial to tune Eth/Heroku work-balance (manual or automated)
 
+Distributed ready
+
+* Docker images available, ready-to-run on x86 cloud/home server
+* Ready-to-run SD card image for Rasperry Pi
+* Worker included in TheGrid client(s)
+
 ## Done
 
 * Initial [Ethereum/Solidity contract](./contracts/JobAgency.sol) for a job agency
