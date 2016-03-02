@@ -1,19 +1,14 @@
-contract Job {
-  byte[46] code;
-  byte[46] input;
-  byte[46] result;
-
-  function Job(byte[46] codeHash, byte[46] inputHash) {
-      code = codeHash;
-      input = inputHash;
-  }
-} 
 
 contract JobAgency {
+  struct Job {
+    byte[46] code;
+    byte[46] input;
+    byte[46] result;
+  }
 
-  address[] jobs; // 'Job' addresses
+  Job[] jobs;
 
-  event JobPosted(uint jobId, address jobAddress);
+  event JobPosted(uint jobId);
 
 	function JobAgency() {
 
@@ -23,24 +18,31 @@ contract JobAgency {
     return jobs.length;
   }
 
-  function getJob(uint id) returns(address job) {
-    return jobs[id];
+  function getJobData(uint id) returns(byte[46] code, byte[46] input) {
+    var job = jobs[id];
+    return (job.code, job.input);
+  }
+
+  function getJobCode(uint id) returns(byte[46]) {
+    return jobs[id].code;
+  }
+  function getJobInput(uint id) returns(byte[46]) {
+    return jobs[id].input;
   }
 
   // MAYBE: verify format of IPFS hash? starting with Qm
   // FIXME: keep track of job reward
   // TODO: add some way for clients to filter posted jobs (type etc)
   // Hashes are to be
-	function postJob(byte[46] inputHash, byte[46] codeHash)
+	function postJob(byte[46] codeHash, byte[46] inputHash)
       returns(uint jobid)
   {
 		address poster = msg.sender;
 
-    var job = new Job(codeHash, inputHash);
-    address jobAddress = job;
-    jobs.push(jobAddress);
+    var job = Job({code: codeHash, input: inputHash, result: inputHash});
     uint jobId = jobs.length;
-    JobPosted(jobId, jobAddress);
+    jobs.push(job);
+    JobPosted(jobId);
 
     return jobs.length;
 	}

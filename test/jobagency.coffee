@@ -1,6 +1,15 @@
 codeHash = 'QmVQ8mn19LkEoXpyEBhZEkk9PtD9zeGbJ7JbCei9CFNCbU'
 inputData = 'QmYAXgX8ARiriupMQsbGXtKdDyGzWry1YV3sycKw1qqmgH'
-#console.log 'l', codeHash.length, inputData.length
+
+toHex = (str) ->
+  a = []
+  for c in str
+    h = c.charCodeAt(0)
+    h = "0x"+h.toString(16)
+    a.push h
+  return a
+toStr = (arr) ->
+  return (String.fromCharCode(parseInt(i, 16)) for i in arr).join('')
 
 contract 'JobAgency', (accounts) ->
 
@@ -14,9 +23,9 @@ contract 'JobAgency', (accounts) ->
   
     it 'should accept and update jobid', (done) ->
       agency = JobAgency.deployed()
-      agency.postJob(codeHash, inputData).then (tx) ->
+      agency.postJob(toHex(codeHash), toHex(inputData)).then (tx) ->
         agency.getLastJobId.call().then (jobid) ->
-          assert.equal jobid, 1
+          assert.equal jobid.e, 0
           return done null
       .catch(done)
 
@@ -24,12 +33,23 @@ contract 'JobAgency', (accounts) ->
       agency = JobAgency.deployed()
       e = agency.JobPosted()
       e.watch (err, event) ->
+        e.stopWatching()
         return done err if err
-        console.log event.args
-        assert.equal event.args.jobId, 2
+        assert.equal event.args.jobId, 1
         return done null
 
-      agency.postJob(codeHash, inputData).then (jobid) ->
+      agency.postJob(toHex(codeHash), toHex(inputData)).then (jobid) ->
         #console.log 'posted', jobid
         null # ignored
       .catch(done)
+
+    it 'new Job should have input and code hashes', (done) ->
+      agency = JobAgency.deployed()
+      agency.getJobCode.call(1)
+      .then (d) ->
+        assert.equal codeHash, toStr(d)
+      .then () ->
+        return agency.getJobInput.call(1)
+      .then (d) ->
+        assert.equal inputData, toStr(d)
+      .then(done).catch(done)
