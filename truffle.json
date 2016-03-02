@@ -10,7 +10,8 @@
     "images/": "images/"
   },
   "deploy": [
-    "MetaCoin"
+    "MetaCoin",
+    "JobAgency"
   ],
   "rpc": {
     "host": "localhost",
