@@ -4,6 +4,22 @@
 
 ![Rise of the Dapp](http://gateway.ipfs.io/ipfs/QmaZDEQB4LrT7CQzEtAfKCDHrqsAgKfdig96QrV7rbNMJw)
 
+## Motivation
+
+A primarily decentralized approach has following benefits
+
+* Increased robustness from service disruption due to failure in central providers (Heroku/AWS)
+* Potential of cost savings, by reducing friction in participantion,
+and externalizing computational costs to users and volunteers
+* Avoids single actors (like a local government and/or ISP) being able to take service away from users
+
+As a AI-based, website producing entity, there are primarily two aspects to decentralize
+
+* Production of new webpages from content (content analysis, and page solving).
+CPU intensive.
+* Serving webpages to site visitors.
+Bandwidth and disk intensive.
+
 ## Status
 
 *Pre-proof-of-concept*. See TODO section
@@ -74,4 +90,36 @@ Distributed ready
 
 * Initial [Ethereum/Solidity contract](./contracts/JobAgency.sol) for a job agency
 * Initial [IPFS components for NoFlo](http://github.com/noflo/noflo-ipfs)
+
+## Security
+
+Brainstorming here...
+
+Attacker returning bad results could
+
+* Put ads on pages
+* Put in obscene content
+* Remove some or all content, for censoring or denial-of-service
+* Try to steal credentials from host-scoped storage (localstorage)
+
+Attacks can also happen by attacking the contracts themselves.
+This could allow to bypass security mechanisms to perform any of the above,
+as well as steal the Ether currently in the system.
+
+Potential mechanisms
+
+* Functional verification (tests) of results
+* Trusted workers replicating the work, comparing it.
+For some small, randomized portion of the jobs. "ticket control"
+* Reputation system. May still be open for [Sybil attack](https://en.wikipedia.org/wiki/Sybil_attack)
+* Require a deposit, for punishment in case of bad/contested results.
+* Withholding payout of performed work until a lot of work is verified
+* User design review of output, before it goes live
+
+
+## Related work
+
+* [Ethereum computation market](https://github.com/pipermerriam/ethereum-computation-market)
+* [From Smart Contracts to Courts with not so Smart Judges](https://blog.ethereum.org/2016/02/17/smart-contracts-courts-not-smart-judges/).
+
 
