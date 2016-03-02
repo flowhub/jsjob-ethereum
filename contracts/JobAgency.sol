@@ -1,4 +1,6 @@
 
+// TODO: a better way of doing the IPFS hash than byte[46]?
+// does not seem there are any user-defined typedef/aliases in Solidify...
 contract JobAgency {
   struct Job {
     byte[46] code;
@@ -32,8 +34,7 @@ contract JobAgency {
 
   // MAYBE: verify format of IPFS hash? starting with Qm
   // FIXME: keep track of job reward
-  // TODO: add some way for clients to filter posted jobs (type etc)
-  // Hashes are to be
+  // TODO: add some way for clients tuso filter posted jobs (type etc)
 	function postJob(byte[46] codeHash, byte[46] inputHash)
       returns(uint jobid)
   {
