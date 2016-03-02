@@ -10,15 +10,13 @@
 
 ## Installing
 
-Download and install [go-ethereum](https://github.com/ethereum/go-ethereum).
-
     npm install
 
 ## Running
 
-Start an Ethereum client, with JSON-RPC enabled. 
+Start Ethereum testing client, with JSON-RPC enabled. 
 
-    geth --rpc --fast
+    ./node_modules/.bin/testrpc
 
 Run tests
 
