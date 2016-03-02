@@ -8,5 +8,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+before_script:
+- ./node_modules/.bin/testrpc
 node_js:
 - '4.2'
