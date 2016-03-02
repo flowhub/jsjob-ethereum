@@ -63,7 +63,7 @@ The `Job`verifies the result, and assuming it was correct, credits the `Agent`.
 Proof-of-concept
 
 * Something which posts jobs to Ethereum (MsgFlo participant?)
-* Initial JS interface definition
+* Initial JS interface definition for worker plugins
 * Something which listens to new jobs on Ethereum JobAgency, and performs them.
 * Something that waits for completed jobs (MsgFlo participant?)
 * Some example application, which has some code+data up on IPFS, uses this to compute things
