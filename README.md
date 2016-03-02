@@ -48,7 +48,8 @@ Proof-of-concept
 
 * Something which posts jobs to Ethereum (MsgFlo participant?)
 * Initial JS interface definition
-* Something which listens to jobs on Ethereum JobAgency, and performs them. (MsgFlo participant?)
+* Something which listens to new jobs on Ethereum JobAgency, and performs them.
+* Something that waits for completed jobs (MsgFlo participant?)
 * Some example application, which has some code+data up on IPFS, uses this to compute things
 
 Solving capable
