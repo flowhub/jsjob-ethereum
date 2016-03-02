@@ -20,7 +20,10 @@ Start Ethereum testing client, with JSON-RPC enabled.
 
 Run tests
 
-    ./truffle test
+    npm test
+
+We use the [truffle](https://github.com/ConsenSys/truffle) framework, accessed wrapper `./truffle` script.
+Refer to their documentation for more interesting testcases.
 
 ## Architecture
 
