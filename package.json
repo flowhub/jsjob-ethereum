@@ -4,7 +4,6 @@
   "description": "Ethereum experiements",
   "main": "index.js",
   "dependencies": {
-    "truffle": "^0.3.1"
   },
   "devDependencies": {
     "ethereumjs-testrpc": "^1.0.0",
