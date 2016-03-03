@@ -89,6 +89,15 @@ class Worker
       data.on 'end', ->
         callback null, contents
 
+  setIpfsContents: (data, callback) ->
+    if typeof data is 'string'
+      data = new Buffer data
+    @ipfs.add data, (err, res) ->
+      return callback err if err
+      unless res?.length
+        return callback new Error "No results for IPFS add"
+      callback null, res[0].Hash
+
   runJob: (jobId, callback) ->
     console.time "Job #{jobId} total"
     @getJobData jobId, (err, job) =>
@@ -113,11 +122,14 @@ class Worker
         jobOptions = {}
 
         console.time "Job #{jobId} run"
-        @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
+        @runner.performJob codeUrl, inputData, jobOptions, (err, j) =>
           console.timeEnd "Job #{jobId} run"
           console.timeEnd "Job #{jobId} total"
           return callback err if err
-          callback j
+          resultData = j?.html or j
+          @setIpfsContents resultData, (err, hash) ->
+            return callback err if err
+            callback null, hash
 
   start: (callback) ->
     @startRunner (err) =>
@@ -132,9 +144,7 @@ class Worker
             if err
               console.log "ERROR", err
               process.exit 1
-            if result?.html
-              console.log result.html
-              return
+
             console.log result
 
   stop: (callback) ->
