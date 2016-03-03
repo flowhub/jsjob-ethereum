@@ -50,7 +50,9 @@ class Worker
 
   runJob: (job, callback) ->
     codeUrl = 'http://localhost:3000/test/fixtures/return-original.js'
-    inputData = {}
+    inputData = {
+        'hello': 'world!'
+    }
     jobOptions = {}
     @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
       console.log 'js job', err, j
