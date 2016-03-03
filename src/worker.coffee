@@ -104,7 +104,6 @@ class Worker
       console.time "Job #{jobId} IPFS"
       @getIpfsContents job.input, (err, contents) =>
         console.timeEnd "Job #{jobId} IPFS"
-        console.log err, contents
         return callback err if err
         try
           inputData = JSON.parse contents
@@ -112,7 +111,6 @@ class Worker
           return callback e
 
         jobOptions = {}
-        console.log codeUrl, inputData
 
         console.time "Job #{jobId} run"
         @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
@@ -131,7 +129,13 @@ class Worker
         console.log 'JobAgency address:', @agency.address
         @subscribeAgency @agency, (err, jobId) =>
           @runJob jobId, (err, result) =>
-            console.log err, result
+            if err
+              console.log "ERROR", err
+              process.exit 1
+            if result?.html
+              console.log result.html
+              return
+            console.log result
 
   stop: (callback) ->
     @agencyWatcher.stopWatching() if @agencyWatcher
