@@ -10,7 +10,6 @@
     "images/": "images/"
   },
   "deploy": [
-    "MetaCoin",
     "JobAgency"
   ],
   "rpc": {

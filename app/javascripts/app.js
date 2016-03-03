@@ -1,38 +1,36 @@
 var accounts;
 var account;
-var balance;
 
 function setStatus(message) {
   var status = document.getElementById("status");
   status.innerHTML = message;
 };
 
-function refreshBalance() {
-  var meta = MetaCoin.deployed();
-
-  meta.getBalance.call(account, {from: account}).then(function(value) {
-    var balance_element = document.getElementById("balance");
+function refreshJobs() {
+  var agency = JobAgency.deployed();
+  agency.getLastJobId.call({from: account}).then(function(value) {
+    var balance_element = document.getElementById("jobs");
     balance_element.innerHTML = value.valueOf();
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error getting balance; see log.");
+   setStatus("Error getting balance; see log.");
   });
 };
 
-function sendCoin() {
-  var meta = MetaCoin.deployed();
+function postJob() {
+  var agency = JobAgency.deployed();
 
-  var amount = parseInt(document.getElementById("amount").value);
-  var receiver = document.getElementById("receiver").value;
+  var codeHash = parseInt(document.getElementById("codehash").value);
+  var inputHash = document.getElementById("inputhash").value;
 
-  setStatus("Initiating transaction... (please wait)");
-
-  meta.sendCoin(receiver, amount, {from: account}).then(function() {
-    setStatus("Transaction complete!");
-    refreshBalance();
+  setStatus("Starting jobposting transaction... (please wait)");
+  agency.postJob(codeHash, inputHash, {from: account}).then(function() {
+    setStatus("Job posted!");
+    refreshJobs();
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error sending coin; see log.");
+    console.log(e.stack);
+    setStatus("Error sending coin: " + e.message);
   });
 };
 
@@ -51,6 +49,6 @@ window.onload = function() {
     accounts = accs;
     account = accounts[0];
 
-    refreshBalance();
+    refreshJobs();
   });
 }

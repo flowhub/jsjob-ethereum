@@ -1,3 +1,3 @@
 node_modules/
-environments/test/contracts/*.js
+environments/*/contracts/*.js
 environments/*/build
