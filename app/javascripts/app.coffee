@@ -14,7 +14,7 @@ refreshJobs = ->
     console.log e
     setStatus 'Error getting balance; see log.'
 
-postJob = ->
+window.postJob = ->
   agency = JobAgency.deployed()
 
   codeHash = parseInt(document.getElementById('codehash').value)
