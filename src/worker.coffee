@@ -2,8 +2,10 @@
 Web3 = require "web3"
 Pudding = require "ether-pudding"
 PuddingLoader = require "ether-pudding/loader"
+Promise = require 'bluebird'
 
 Runner = require './runner'
+ipfs = require './ipfs'
 
 class Worker
   constructor: (@options = {}) ->
@@ -11,6 +13,7 @@ class Worker
     @options.ethereum.rpc = 'http://localhost:8545' unless @options.ethereum.rpc
     @options.ethereum.contractsDir = './environments/development/contracts' unless @options.ethereum.contractsDir
     console.log @options
+    @agency = null
     @agencyWatcher = null
     @preparePudding()
     @seenJobIds = []
@@ -48,17 +51,34 @@ class Worker
       return callback err if err
       do callback
 
-  runJob: (job, callback) ->
-    codeUrl = 'http://localhost:3000/test/fixtures/return-original.js'
-    inputData = {
-        'hello': 'world!'
-    }
-    jobOptions = {}
-    console.time "Job #{job}"
-    @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
-      console.timeEnd "Job #{job}"
-      return callback err if err
-      callback j
+  getJobData: (jobId, callback) ->
+    getCode = @agency.getJobCode.call jobId
+      .then (d) ->
+        return ipfs.toStr d
+    getInput = @agency.getJobInput.call jobId
+      .then (d) ->
+        return ipfs.toStr d
+    return Promise.props({
+        input: getInput,
+        code: getCode,
+    }).nodeify(callback)
+
+  runJob: (jobId, callback) ->
+    @getJobData jobId, (err, job) =>
+      console.time "Job #{jobId}"
+      console.log 'job', jobId, job
+
+      # FIXME: get from IPFS
+      codeUrl = 'http://localhost:3000/test/fixtures/return-original.js'
+      inputData = {
+          'hello': 'world!'
+      }
+      jobOptions = {}
+
+      @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
+        console.timeEnd "Job #{jobId}"
+        return callback err if err
+        callback j
 
   start: (callback) ->
     @startRunner (err) =>
@@ -66,9 +86,9 @@ class Worker
       @loadContracts (err, contracts) =>
         console.log err, contracts
         return callback err if err
-        agency = contracts.JobAgency.deployed()
-        console.log 'JobAgency address:', agency.address
-        @subscribeAgency agency, (err, jobId) =>
+        @agency = contracts.JobAgency.deployed()
+        console.log 'JobAgency address:', @agency.address
+        @subscribeAgency @agency, (err, jobId) =>
           @runJob jobId, (err, result) =>
             console.log err, result
 

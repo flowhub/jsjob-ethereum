@@ -1,6 +1,18 @@
 accounts = undefined
 account = undefined
 
+# FIXME: use src/ipfs.coffee functions
+toHex = (str) ->
+  a = []
+  for c in str
+    h = c.charCodeAt(0)
+    h = "0x"+h.toString(16)
+    a.push h
+  return a
+toStr = (arr) ->
+  return (String.fromCharCode(parseInt(i, 16)) for i in arr).join('')
+
+
 setStatus = (message) ->
   status = document.getElementById('status')
   status.innerHTML = message
@@ -22,7 +34,7 @@ window.postJob = ->
 
   setStatus 'Starting jobposting transaction... (please wait)'
 
-  agency.postJob(codeHash, inputHash, from: account)
+  agency.postJob(toHex(codeHash), toHex(inputHash), from: account)
   .then(->
     setStatus 'Job posted!'
     refreshJobs()
