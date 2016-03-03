@@ -18,6 +18,7 @@ class Worker
 
     @options.ipfs = {} unless @options.ipfs
     @options.ipfs.apiAddr = '/ip4/127.0.0.1/tcp/5001' unless @options.ipfs.apiAddr
+    @options.ipfs.gateway = 'http://localhost:8080' unless @options.ipfs.gateway
 
     @agencyWatcher = null
     @preparePudding()
@@ -78,7 +79,7 @@ class Worker
       console.log 'job', jobId, job
 
       # FIXME: get from IPFS
-      codeUrl = 'http://localhost:3000/test/fixtures/return-original.js'
+      codeUrl = "#{@options.ipfs.gateway}/ipfs/#{job.code}"
       inputData = {
           'hello': 'world!'
       }
