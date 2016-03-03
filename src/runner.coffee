@@ -154,7 +154,6 @@ class Runner
   start: (callback) ->
     debug 'start', @options.port
     @server = http.createServer (req, res) =>
-      console.log 're', req
       @onRequest req, res
     @server.listen @options.port, (err) =>
       debug 'started', @options.port
