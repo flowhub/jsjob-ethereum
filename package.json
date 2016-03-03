@@ -7,10 +7,12 @@
     "coffee-script": "^1.10.0",
     "debug": "^2.2.0",
     "ether-pudding": "^1.0.4",
+    "ipfs-api": "^2.13.2",
     "web3": "^0.15.3"
   },
   "devDependencies": {
     "ethereumjs-testrpc": "^1.0.0",
+    "ipfsd-ctl": "^0.8.3",
     "truffle": "^0.3.1"
   },
   "scripts": {
