@@ -1,7 +1,7 @@
-
 Web3 = require "web3"
 Pudding = require "ether-pudding"
 PuddingLoader = require "ether-pudding/loader"
+Ipfs = require 'ipfs-api'
 
 Runner = require './runner'
 
@@ -10,9 +10,12 @@ class Worker
     @options.ethereum = {} unless @options.ethereum
     @options.ethereum.rpc = 'http://localhost:8545' unless @options.ethereum.rpc
     @options.ethereum.contractsDir = './environments/development/contracts' unless @options.ethereum.contractsDir
-    console.log @options
+    @options.ipfs = {} unless @options.ipfs
+    @options.ipfs.apiAddr = '/ip4/127.0.0.1/tcp/5001' unless @options.ipfs.apiAddr
+
     @agencyWatcher = null
     @preparePudding()
+    @prepareIpfs()
     @seenJobIds = []
     @runner = new Runner @options.runner
 
@@ -21,6 +24,9 @@ class Worker
     Pudding.setWeb3 @web3
     p = new Web3.providers.HttpProvider @options.ethereum.rpc
     @web3.setProvider p
+
+  prepareIpfs: ->
+    @ipfs = Ipfs @options.ipfs.apiAddr
 
   loadContracts: (callback) ->
     contracts = {}
