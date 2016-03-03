@@ -3,6 +3,7 @@ Pudding = require "ether-pudding"
 PuddingLoader = require "ether-pudding/loader"
 Promise = require 'bluebird'
 Ipfs = require 'ipfs-api'
+url = require 'url'
 
 Runner = require './runner'
 ipfs = require './ipfs'
@@ -18,7 +19,8 @@ class Worker
 
     @options.ipfs = {} unless @options.ipfs
     @options.ipfs.apiAddr = '/ip4/127.0.0.1/tcp/5001' unless @options.ipfs.apiAddr
-    @options.ipfs.gateway = 'http://localhost:8080' unless @options.ipfs.gateway
+    # FIXME: Default should be 8080?
+    @options.ipfs.gateway = 'http://localhost:8090' unless @options.ipfs.gateway
 
     @agencyWatcher = null
     @preparePudding()
@@ -73,22 +75,42 @@ class Worker
         code: getCode,
     }).nodeify(callback)
 
+  getIpfsContents: (hash, callback) ->
+    @ipfs.cat hash, (err, data) ->
+      return callback err if err
+      contents = ''
+      data.on 'data', (chunk) ->
+        contents += chunk
+      data.on 'end', ->
+        callback null, contents
+
   runJob: (jobId, callback) ->
     @getJobData jobId, (err, job) =>
       console.time "Job #{jobId}"
       console.log 'job', jobId, job
 
       # FIXME: get from IPFS
-      codeUrl = "#{@options.ipfs.gateway}/ipfs/#{job.code}"
-      inputData = {
-          'hello': 'world!'
-      }
-      jobOptions = {}
+      gatewayUrl = url.parse @options.ipfs.gateway
+      codeUrl = url.format
+        protocol: gatewayUrl.protocol
+        host: gatewayUrl.host
+        pathname: "/ipfs/#{job.code}"
 
-      @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
-        console.timeEnd "Job #{jobId}"
+      @getIpfsContents job.input, (err, contents) =>
+        console.log err, contents
         return callback err if err
-        callback j
+        try
+          inputData = JSON.parse contents
+        catch e
+          return callback e
+
+        jobOptions = {}
+        console.log codeUrl, inputData
+
+        @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
+          console.timeEnd "Job #{jobId}"
+          return callback err if err
+          callback j
 
   start: (callback) ->
     @startRunner (err) =>
