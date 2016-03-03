@@ -31,16 +31,16 @@ class Worker
   subscribeAgency: (agency, callback) ->
     @agencyWatcher = agency.JobPosted()
     @agencyWatcher.watch (err, event) =>
-      return console.log 'JobPosted error:', err if err
+      return callback err if err
       jobId = event.args.jobId.c[0]
 
       # Avoid duplicates. Due to multiple confirmations?
       # FIXME: Probably we should wait for a certain number before considering it legit
       if jobId in @seenJobIds
+        console.log "Duplicate job #{jobId} received"
         return
       @seenJobIds.push jobId
 
-      console.log 'new job posted', err, jobId
       return callback null, jobId
 
   startRunner: (callback) ->
@@ -52,8 +52,9 @@ class Worker
     codeUrl = 'http://localhost:3000/test/fixtures/return-original.js'
     inputData = {}
     jobOptions = {}
+    console.time "Job #{job}"
     @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
-      console.log 'js job', err, j
+      console.timeEnd "Job #{job}"
       return callback err if err
       callback j
 
