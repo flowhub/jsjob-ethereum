@@ -4,6 +4,7 @@ PuddingLoader = require "ether-pudding/loader"
 Promise = require 'bluebird'
 Ipfs = require 'ipfs-api'
 url = require 'url'
+debug = require('debug')('jobjs:worker')
 
 Runner = require './runner'
 ipfs = require './ipfs'
@@ -52,7 +53,7 @@ class Worker
       # Avoid duplicates. Due to multiple confirmations?
       # FIXME: Probably we should wait for a certain number before considering it legit
       if jobId in @seenJobIds
-        console.log "Duplicate job #{jobId} received"
+        debug "Duplicate job #{jobId} received"
         return
       @seenJobIds.push jobId
 
