@@ -29,11 +29,12 @@ refreshJobs = ->
 window.postJob = ->
   agency = JobAgency.deployed()
 
-  codeHash = parseInt(document.getElementById('codehash').value)
+  codeHash = document.getElementById('codehash').value
   inputHash = document.getElementById('inputhash').value
 
   setStatus 'Starting jobposting transaction... (please wait)'
 
+  console.log 'job data', inputHash, codeHash
   agency.postJob(toHex(codeHash), toHex(inputHash), from: account)
   .then(->
     setStatus 'Job posted!'
