@@ -13,7 +13,7 @@ A primarily decentralized approach has following benefits
 and externalizing computational costs to users and volunteers
 * Avoids single actors (like a local government and/or ISP) being able to take service away from users
 
-As a AI-based, website producing entity, there are primarily two aspects to decentralize
+As a AI-based, website producing entity, there are primarily two aspects to decentralize:
 
 * Production of new webpages from content (content analysis, and page solving).
 CPU intensive.
