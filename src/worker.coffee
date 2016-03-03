@@ -49,7 +49,7 @@ class Worker
       do callback
 
   runJob: (job, callback) ->
-    codeUrl = 'http://localhost:8080/build/plugin.js'
+    codeUrl = 'http://localhost:3000/test/fixtures/return-original.js'
     inputData = {}
     jobOptions = {}
     @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
