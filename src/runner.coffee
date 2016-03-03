@@ -19,47 +19,47 @@ htmlEscape = (html) ->
   .replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;')
 
+# Required cause PhantomJS sucks...
+polyFillFunctionBind = """
+  // https://raw.githubusercontent.com/facebook/react/master/src/test/phantomjs-shims.js
+  (function() {
+
+  var Ap = Array.prototype;
+  var slice = Ap.slice;
+  var Fp = Function.prototype;
+
+  if (!Fp.bind) {
+    // PhantomJS doesn't support Function.prototype.bind natively, so
+    // polyfill it whenever this module is required.
+    Fp.bind = function(context) {
+      var func = this;
+      var args = slice.call(arguments, 1);
+
+      function bound() {
+        var invokedAsConstructor = func.prototype && (this instanceof func);
+        return func.apply(
+          // Ignore the context parameter when invoking the bound function
+          // as a constructor. Note that this includes not only constructor
+          // invocations using the new keyword but also calls to base class
+          // constructors such as BaseClass.call(this, ...) or super(...).
+          !invokedAsConstructor && context || this,
+          args.concat(slice.call(arguments))
+        );
+      }
+
+      // The bound function must share the .prototype of the unbound
+      // function so that any object created by one constructor will count
+      // as an instance of both constructors.
+      bound.prototype = func.prototype;
+
+      return bound;
+    };
+  }
+
+  })();
+"""
+
 generateHtml = (filter, page, options) ->
-
-  # Required cause PhantomJS sucks...
-  polyFillBind = """
-    // https://raw.githubusercontent.com/facebook/react/master/src/test/phantomjs-shims.js
-    (function() {
-
-    var Ap = Array.prototype;
-    var slice = Ap.slice;
-    var Fp = Function.prototype;
-
-    if (!Fp.bind) {
-      // PhantomJS doesn't support Function.prototype.bind natively, so
-      // polyfill it whenever this module is required.
-      Fp.bind = function(context) {
-        var func = this;
-        var args = slice.call(arguments, 1);
-
-        function bound() {
-          var invokedAsConstructor = func.prototype && (this instanceof func);
-          return func.apply(
-            // Ignore the context parameter when invoking the bound function
-            // as a constructor. Note that this includes not only constructor
-            // invocations using the new keyword but also calls to base class
-            // constructors such as BaseClass.call(this, ...) or super(...).
-            !invokedAsConstructor && context || this,
-            args.concat(slice.call(arguments))
-          );
-        }
-
-        // The bound function must share the .prototype of the unbound
-        // function so that any object created by one constructor will count
-        // as an instance of both constructors.
-        bound.prototype = func.prototype;
-
-        return bound;
-      };
-    }
-
-    })();
-  """
 
   library = """
   window.polyEvent = function(id, payload) {
@@ -108,11 +108,12 @@ generateHtml = (filter, page, options) ->
   payload = { page: page, options: options }
   json = JSON.stringify payload, null, 4
 
+  scriptTags = ("<script>#{s}</script>" for s in options.scripts).join("\n")
   body = """<!DOCTYPE html>
   <html>
     <head>
       <meta charset="utf=8">
-      <script>#{polyFillBind}</script>
+      #{scriptTags}
       <script>#{library}</script>
       <script src="#{filter}"></script>
       <script id="poly-input-data" type="application/json">#{json}</script>
@@ -150,6 +151,7 @@ class Runner
     @options.verbose = true if process.env['JSJOB_VERBOSE']
     @options.detailsLog = true
     @options.detailsLog = process.env['JSJOB_DETAILS_LOG'] == 'true' if process.env['JSJOB_DETAILS_LOG']?
+    @options.scripts = [ polyFillFunctionBind ] if not @options.scripts
 
   start: (callback) ->
     debug 'start', @options.port
@@ -168,6 +170,7 @@ class Runner
   # options is optional, for historical reasons
   performJob: (codeUrl, inputData, jobOptions, callback) ->
 
+    jobOptions.scripts = @options.scripts if not jobOptions.scripts
     @options.allowedResources = jobOptions.allowedResources
     p = new PhantomProcess @options
     job =
