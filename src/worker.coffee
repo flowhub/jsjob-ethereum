@@ -3,6 +3,8 @@ Web3 = require "web3"
 Pudding = require "ether-pudding"
 PuddingLoader = require "ether-pudding/loader"
 
+Runner = require './runner'
+
 loadContracts = (callback) ->
   contractsDir = './environments/development/contracts'
   contracts = {}
@@ -19,11 +21,8 @@ exports.main = main = () ->
 
   seenJobIds = []
 
-  loadContracts (err, contracts) ->
-    #agency = contracts.JobAgency.at contracts.JobAgency.address
-    agency = contracts.JobAgency.deployed()
-    console.log 'JobAgency address:', agency.address
 
+  subscribeJobsEvent = (agency, callback) ->
     event = agency.JobPosted()
     event.watch (err, event) ->
       return console.log 'JobPosted error:', err if err
@@ -34,9 +33,30 @@ exports.main = main = () ->
       if jobId in seenJobIds
         return
       seenJobIds.push jobId
+
       console.log 'new job posted', err, jobId
+      return callback null, jobId
+
+    return event
+
+  runner = new Runner {}
+  runner.start (err) ->
+    throw err if err
+    loadContracts (err, contracts) ->
+      throw err if err
+
+      agency = contracts.JobAgency.deployed()
+      console.log 'JobAgency address:', agency.address
+      event = subscribeJobsEvent agency, (err, job) ->
+        console.log 'new job', err, job
+        throw err if err
+        
+        codeUrl = 'http://localhost:8080/build/plugin.js'
+        inputData = {}
+        jobOptions = {}
+        runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
+          console.log 'js job', err, j
 
       #event.stopWatching()
-
 
 main() if not module.parent
