@@ -90,8 +90,8 @@ class Worker
         callback null, contents
 
   runJob: (jobId, callback) ->
+    console.time "Job #{jobId} total"
     @getJobData jobId, (err, job) =>
-      console.time "Job #{jobId}"
       console.log 'job', jobId, job
 
       # FIXME: get from IPFS
@@ -101,7 +101,9 @@ class Worker
         host: gatewayUrl.host
         pathname: "/ipfs/#{job.code}"
 
+      console.time "Job #{jobId} IPFS"
       @getIpfsContents job.input, (err, contents) =>
+        console.timeEnd "Job #{jobId} IPFS"
         console.log err, contents
         return callback err if err
         try
@@ -112,8 +114,10 @@ class Worker
         jobOptions = {}
         console.log codeUrl, inputData
 
+        console.time "Job #{jobId} run"
         @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
-          console.timeEnd "Job #{jobId}"
+          console.timeEnd "Job #{jobId} run"
+          console.timeEnd "Job #{jobId} total"
           return callback err if err
           callback j
 
