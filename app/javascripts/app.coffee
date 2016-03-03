@@ -28,6 +28,7 @@ refreshJobs = ->
 
 window.postJob = ->
   agency = JobAgency.deployed()
+  console.log 'agency address', agency.address
 
   codeHash = document.getElementById('codehash').value
   inputHash = document.getElementById('inputhash').value
