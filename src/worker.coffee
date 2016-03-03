@@ -89,6 +89,15 @@ class Worker
       data.on 'end', ->
         callback null, contents
 
+  setIpfsContents: (data, callback) ->
+    if typeof data is 'string'
+      data = new Buffer data
+    @ipfs.add data, (err, res) ->
+      return callback err if err
+      unless res?.length
+        return callback new Error "No results for IPFS add"
+      callback null, res[0].Hash
+
   runJob: (jobId, callback) ->
     console.time "Job #{jobId} total"
     @getJobData jobId, (err, job) =>
@@ -113,11 +122,14 @@ class Worker
         jobOptions = {}
 
         console.time "Job #{jobId} run"
-        @runner.performJob codeUrl, inputData, jobOptions, (err, j) ->
+        @runner.performJob codeUrl, inputData, jobOptions, (err, j) =>
           console.timeEnd "Job #{jobId} run"
           console.timeEnd "Job #{jobId} total"
           return callback err if err
-          callback j
+          resultData = j?.html or j
+          @setIpfsContents resultData, (err, hash) ->
+            return callback err if err
+            callback null, hash
 
   start: (callback) ->
     @startRunner (err) =>
@@ -125,16 +137,17 @@ class Worker
       @loadContracts (err, contracts) =>
         console.log err, contracts
         return callback err if err
-        @agency = contracts.JobAgency.deployed()
+        if @options.agency
+          @agency = contracts.JobAgency.at @options.agency
+        else
+          @agency = contracts.JobAgency.deployed()
         console.log 'JobAgency address:', @agency.address
         @subscribeAgency @agency, (err, jobId) =>
           @runJob jobId, (err, result) =>
             if err
               console.log "ERROR", err
               process.exit 1
-            if result?.html
-              console.log result.html
-              return
+
             console.log result
 
   stop: (callback) ->
@@ -142,11 +155,11 @@ class Worker
     @agencyWatcher = null
     @runner.stop callback
 
-exports.main = main = () ->
-  w = new Worker
+exports.main = main = (options) ->
+  w = new Worker options
   w.start (err) ->
     if err
       console.error err
       process.exit 1
 
-main() if not module.parent
+do main unless module.parent
