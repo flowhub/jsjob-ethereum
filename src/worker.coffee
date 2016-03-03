@@ -137,7 +137,10 @@ class Worker
       @loadContracts (err, contracts) =>
         console.log err, contracts
         return callback err if err
-        @agency = contracts.JobAgency.deployed()
+        if @options.agency
+          @agency = contracts.JobAgency.at @options.agency
+        else
+          @agency = contracts.JobAgency.deployed()
         console.log 'JobAgency address:', @agency.address
         @subscribeAgency @agency, (err, jobId) =>
           @runJob jobId, (err, result) =>
@@ -152,11 +155,11 @@ class Worker
     @agencyWatcher = null
     @runner.stop callback
 
-exports.main = main = () ->
-  w = new Worker
+exports.main = main = (options) ->
+  w = new Worker options
   w.start (err) ->
     if err
       console.error err
       process.exit 1
 
-main() if not module.parent
+do main unless module.parent
