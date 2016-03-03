@@ -2,7 +2,7 @@
   "build": {
     "index.html": "index.html",
     "app.js": [
-      "javascripts/app.js"
+      "javascripts/app.coffee"
     ],
     "app.css": [
       "stylesheets/app.css"
