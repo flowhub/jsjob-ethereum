@@ -93,6 +93,8 @@ class Worker
         callback null, contents
 
   setIpfsContents: (data, callback) ->
+    if typeof data is 'object'
+      data = JSON.stringify data
     if typeof data is 'string'
       data = new Buffer data
     @ipfs.add data, (err, res) ->
