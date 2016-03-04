@@ -15,8 +15,11 @@ contract 'JobAgency', (accounts) ->
 
   it 'should start with no jobs', (done) ->
     agency = JobAgency.deployed()
-    agency.getLastJobId.call().then (jobid) ->
-      assert.equal jobid.s, 0
+    console.log 'agency address', agency.address
+    agency.getLastJobId.call().then (jobId) ->
+      jobId = jobId.toNumber()
+      console.log 'initial id', jobId
+      assert.equal jobId, -1
     .then(done).catch done
 
   describe 'postJob() with valid code and inputs', () ->
@@ -24,27 +27,39 @@ contract 'JobAgency', (accounts) ->
     it 'should accept and update jobid', (done) ->
       agency = JobAgency.deployed()
       agency.postJob(toHex(codeHash), toHex(inputData)).then (tx) ->
-        console.log 'accept text tx', tx
+        console.log 'accepttest tx', tx
         agency.getLastJobId.call().then (jobId) ->
-          console.log 'id', jobId.s
-          assert.equal jobId.s, 1
+          jobId = jobId.toNumber()
+          console.log 'accepttest id', jobId
+          assert.equal jobId, 0
           return done null
       .catch(done)
 
     it 'should emit JobPosted event', (done) ->
+      events = []
+      transaction = null
+
+      checkEvents = () ->
+        for e in events
+            if transaction and e.transactionHash == transaction
+                jobId = e?.args?.jobId.toNumber()
+                console.log 'eventtest id', jobId
+                assert.equal jobId, 1
+                done null
+                return true
+        return false
+
       agency = JobAgency.deployed()
       e = agency.JobPosted()
       e.watch (err, event) ->
-        console.log 'event', err, event?.transactionHash, event?.args?.jobId.s
-        e.stopWatching()
-        return done err if err
-        console.log 'id', event.args.jobId.s
-        assert.equal event.args.jobId.s, 1
-        return done null
+        console.log 'event', err, event?.transactionHash, event?.args?.jobId.toString()
+        events.push event
+        e.stopWatching() if checkEvents()
 
       agency.postJob(toHex(codeHash), toHex(inputData)).then (tx) ->
-        console.log 'event test tx', tx
-        null # ignored
+        console.log 'eventtest tx', tx
+        transaction = tx
+        e.stopWatching() if checkEvents()
       .catch(done)
 
     it 'new Job should have input and code hashes', (done) ->
