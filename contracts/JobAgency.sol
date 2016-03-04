@@ -16,8 +16,8 @@ contract JobAgency {
 
 	}
 
-  function getLastJobId() returns(uint jobid) {
-    return jobs.length;
+  function getLastJobId() returns(int jobid) {
+    return int256(jobs.length)-1;
   }
 
   // XXX: returning a tuple makes the second bytearray filled with 00??
