@@ -1,5 +1,6 @@
 accounts = undefined
 account = undefined
+ipfsGateway = "http://localhost:8090/ipfs/"
 
 # FIXME: use src/ipfs.coffee functions
 toHex = (str) ->
@@ -26,17 +27,32 @@ refreshJobs = ->
     console.log e
     setStatus 'Error getting balance; see log.'
 
+updateIpfs = ->
+  codeHash = document.getElementById('codehash').value
+  inputHash = document.getElementById('inputhash').value
+  inputHashPreview = document.getElementById('inputhash_preview')
+  # TODO: plug in https://github.com/xicombd/is-ipfs for validation
+
+  # Update preview links
+  inputHashPreview = document.getElementById('inputhash_preview')
+  inputHashPreview.href = "#{ipfsGateway}#{inputHash}"
+  codeHashPreview = document.getElementById('codehash_preview')
+  codeHashPreview.href = "#{ipfsGateway}#{codeHash}"
+
+  return values =
+    code: codeHash
+    input: inputHash
+
 window.postJob = ->
   agency = JobAgency.deployed()
   console.log 'agency address', agency.address
 
-  codeHash = document.getElementById('codehash').value
-  inputHash = document.getElementById('inputhash').value
+  values = updateIpfs()
 
   setStatus 'Starting jobposting transaction... (please wait)'
 
-  console.log 'job data', inputHash, codeHash
-  agency.postJob(toHex(codeHash), toHex(inputHash), from: account)
+  console.log 'job data', values.input, values.code
+  agency.postJob(toHex(values.code), toHex(values.input), from: account)
   .then(->
     setStatus 'Job posted!'
     refreshJobs()
@@ -46,6 +62,11 @@ window.postJob = ->
     setStatus 'Error sending coin: ' + e.message
 
 window.onload = ->
+  codeHashInput = document.getElementById('codehash')
+  codeHashInput.addEventListener 'change', updateIpfs
+  inputHashInput = document.getElementById('inputhash')
+  inputHashInput.addEventListener 'change', updateIpfs
+  do updateIpfs
   web3.eth.getAccounts (err, accs) ->
     if err != null
       alert 'There was an error fetching your accounts.'

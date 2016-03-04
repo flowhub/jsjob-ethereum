@@ -93,6 +93,8 @@ class Worker
         callback null, contents
 
   setIpfsContents: (data, callback) ->
+    if typeof data is 'object'
+      data = JSON.stringify data
     if typeof data is 'string'
       data = new Buffer data
     @ipfs.add data, (err, res) ->
@@ -133,7 +135,7 @@ class Worker
           resultData = j?.html or j
           console.time "Job #{jobId} IPFS add"
           @setIpfsContents resultData, (err, hash) ->
-            console.time "Job #{jobId} IPFS add"
+            console.timeEnd "Job #{jobId} IPFS add"
             console.timeEnd "Job #{jobId} total"
             return callback err if err
             callback null, hash
