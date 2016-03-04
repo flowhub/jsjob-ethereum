@@ -16,7 +16,7 @@ contract 'JobAgency', (accounts) ->
   it 'should start with no jobs', (done) ->
     agency = JobAgency.deployed()
     agency.getLastJobId.call().then (jobid) ->
-      assert.equal jobid, 0
+      assert.equal jobid.s, 0
     .then(done).catch done
 
   describe 'postJob() with valid code and inputs', () ->
@@ -24,8 +24,10 @@ contract 'JobAgency', (accounts) ->
     it 'should accept and update jobid', (done) ->
       agency = JobAgency.deployed()
       agency.postJob(toHex(codeHash), toHex(inputData)).then (tx) ->
-        agency.getLastJobId.call().then (jobid) ->
-          assert.equal jobid.e, 0
+        console.log 'accept text tx', tx
+        agency.getLastJobId.call().then (jobId) ->
+          console.log 'id', jobId.s
+          assert.equal jobId.s, 1
           return done null
       .catch(done)
 
@@ -33,13 +35,15 @@ contract 'JobAgency', (accounts) ->
       agency = JobAgency.deployed()
       e = agency.JobPosted()
       e.watch (err, event) ->
+        console.log 'event', err, event?.transactionHash, event?.args?.jobId.s
         e.stopWatching()
         return done err if err
-        assert.equal event.args.jobId, 1
+        console.log 'id', event.args.jobId.s
+        assert.equal event.args.jobId.s, 1
         return done null
 
-      agency.postJob(toHex(codeHash), toHex(inputData)).then (jobid) ->
-        #console.log 'posted', jobid
+      agency.postJob(toHex(codeHash), toHex(inputData)).then (tx) ->
+        console.log 'event test tx', tx
         null # ignored
       .catch(done)
 
