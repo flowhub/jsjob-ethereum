@@ -9,6 +9,7 @@
     "debug": "^2.2.0",
     "ether-pudding": "^1.0.4",
     "ipfs-api": "^2.13.2",
+    "is-ipfs": "^0.1.0",
     "web3": "^0.15.3"
   },
   "devDependencies": {
