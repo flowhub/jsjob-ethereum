@@ -31,11 +31,9 @@ contract JobAgency {
   // MAYBE: verify format of IPFS hash? starting with Qm
   // FIXME: keep track of job reward
   // TODO: add some way for clients tuso filter posted jobs (type etc)
-	function postJob(byte[46] codeHash, byte[46] inputHash)
+  function postJob(byte[46] codeHash, byte[46] inputHash)
       returns(uint jobid)
   {
-		address poster = msg.sender;
-
     var job = Job({code: codeHash, input: inputHash, result: inputHash});
     uint jobId = jobs.length;
     jobs.push(job);
