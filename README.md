@@ -22,7 +22,7 @@ Bandwidth and disk intensive.
 
 ## Status
 
-*Pre-proof-of-concept*. See TODO section
+*Proof-of-concept*. See TODO section
 
 **Note: some of this will be moved into its own open source project when we know what the pieces are.**
 
@@ -30,7 +30,7 @@ Bandwidth and disk intensive.
 
     npm install
 
-## Running
+## Developing
 
 Start Ethereum testing client, with JSON-RPC enabled. 
 
@@ -42,6 +42,41 @@ Run tests
 
 We use the [truffle](https://github.com/ConsenSys/truffle) framework, accessed wrapper `./truffle` script.
 Refer to their documentation for more interesting testcases.
+
+## Deploying a JobAgency
+
+    ./truffle deploy
+
+## Running a worker
+
+Run an Ethereum node. Make sure `account[0]` is unlocked, that JSON-RPC is enabled.
+
+    geth --rpc --unlock 0xd87e13619....
+
+Run an [IPFS](https://github.com/ipfs/go-ipfs) node, on port 8090
+    
+    ipfs config Addresses.Gateway /ip4/127.0.0.1/tcp/8090
+    ipfs daemon
+
+Run the actual worker. Optionally specify address of the JobAgency to use
+
+    ./bin/worker [0x2f431...]
+
+## Running a job poster
+
+Run an Ethereum node.
+Make sure `account[0]` is unlocked, that JSON-RPC is enabled.
+For webui CORS also needs to be allowed.
+
+    geth --rpc --unlock 0xd87e13619.... --rpccorsdomain="*"
+
+Serve the webui, then open browser at [http://localhost:8080](http://localhost:8080)
+
+    ./truffle serve
+
+Alternatively, use the CLI tool:
+
+    ./bin/postjob CODEHASH INPUTHASH [JobAgency address]
 
 ## Architecture
 
