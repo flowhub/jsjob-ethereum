@@ -1,15 +1,9 @@
 codeHash = 'QmVQ8mn19LkEoXpyEBhZEkk9PtD9zeGbJ7JbCei9CFNCbU'
 inputData = 'QmYAXgX8ARiriupMQsbGXtKdDyGzWry1YV3sycKw1qqmgH'
 
-toHex = (str) ->
-  a = []
-  for c in str
-    h = c.charCodeAt(0)
-    h = "0x"+h.toString(16)
-    a.push h
-  return a
-toStr = (arr) ->
-  return (String.fromCharCode(parseInt(i, 16)) for i in arr).join('')
+ipfs = require '../src/ipfs'
+toHex = ipfs.toHex
+toStr = ipfs.toStr
 
 contract 'JobAgency', (accounts) ->
   agency = null
@@ -72,4 +66,40 @@ contract 'JobAgency', (accounts) ->
         return agency.getJobInput.call(1)
       .then (d) ->
         assert.equal inputData, toStr(d)
+      .then(done).catch(done)
+
+  describe 'completeJob() with a valid jobid and a result', ->
+    resultHash = 'QmYAXgX8ARiriupMQsbGXtKdDyGzWry1YV3sycKw1qqmgH'
+    completedJobId = 1
+
+    it 'should be accepted and emit JobPosted event', (done) ->
+      events = []
+      transaction = null
+
+      checkEvents = () ->
+        for e in events
+            if transaction and e.transactionHash == transaction
+                jobId = e?.args?.jobId.toNumber()
+                console.log 'completejob id', jobId
+                assert.equal jobId, completedJobId
+                done null
+                return true
+        return false
+
+      e = agency.JobCompleted()
+      e.watch (err, event) ->
+        events.push event
+        e.stopWatching() if checkEvents()
+
+      agency.completeJob(completedJobId, ipfs.toHex(resultHash))
+      .then (tx) ->
+        console.log 'completejob tx', tx
+        transaction = tx
+        e.stopWatching() if checkEvents()
+      .catch(done)
+
+    it 'results should be fetchable', (done) ->
+      agency.getJobResult.call(completedJobId)
+      .then (d) ->
+        assert.equal resultHash, toStr(d)
       .then(done).catch(done)
