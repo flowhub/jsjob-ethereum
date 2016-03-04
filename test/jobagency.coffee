@@ -12,9 +12,13 @@ toStr = (arr) ->
   return (String.fromCharCode(parseInt(i, 16)) for i in arr).join('')
 
 contract 'JobAgency', (accounts) ->
+  agency = null
+
+  beforeEach () ->
+    #agency = JobAgency.at '0xcd84121483134aadcc3a3fbe3e5b61e3e9d417fa'
+    agency = JobAgency.deployed()
 
   it 'should start with no jobs', (done) ->
-    agency = JobAgency.deployed()
     console.log 'agency address', agency.address
     agency.getLastJobId.call().then (jobId) ->
       jobId = jobId.toNumber()
@@ -25,7 +29,6 @@ contract 'JobAgency', (accounts) ->
   describe 'postJob() with valid code and inputs', () ->
   
     it 'should accept and update jobid', (done) ->
-      agency = JobAgency.deployed()
       agency.postJob(toHex(codeHash), toHex(inputData)).then (tx) ->
         console.log 'accepttest tx', tx
         agency.getLastJobId.call().then (jobId) ->
@@ -49,7 +52,6 @@ contract 'JobAgency', (accounts) ->
                 return true
         return false
 
-      agency = JobAgency.deployed()
       e = agency.JobPosted()
       e.watch (err, event) ->
         console.log 'event', err, event?.transactionHash, event?.args?.jobId.toString()
@@ -63,7 +65,6 @@ contract 'JobAgency', (accounts) ->
       .catch(done)
 
     it 'new Job should have input and code hashes', (done) ->
-      agency = JobAgency.deployed()
       agency.getJobCode.call(1)
       .then (d) ->
         assert.equal codeHash, toStr(d)
