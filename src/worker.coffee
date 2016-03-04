@@ -110,9 +110,9 @@ class Worker
         host: gatewayUrl.host
         pathname: "/ipfs/#{job.code}"
 
-      console.time "Job #{jobId} IPFS"
+      console.time "Job #{jobId} IPFS cat"
       @getIpfsContents job.input, (err, contents) =>
-        console.timeEnd "Job #{jobId} IPFS"
+        console.timeEnd "Job #{jobId} IPFS cat"
         return callback err if err
         try
           inputData = JSON.parse contents
@@ -124,10 +124,12 @@ class Worker
         console.time "Job #{jobId} run"
         @runner.performJob codeUrl, inputData, jobOptions, (err, j) =>
           console.timeEnd "Job #{jobId} run"
-          console.timeEnd "Job #{jobId} total"
           return callback err if err
           resultData = j?.html or j
+          console.time "Job #{jobId} IPFS add"
           @setIpfsContents resultData, (err, hash) ->
+            console.time "Job #{jobId} IPFS add"
+            console.timeEnd "Job #{jobId} total"
             return callback err if err
             callback null, hash
 
