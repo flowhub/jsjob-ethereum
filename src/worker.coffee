@@ -135,7 +135,7 @@ class Worker
           resultData = j?.html or j
           console.time "Job #{jobId} IPFS add"
           @setIpfsContents resultData, (err, hash) ->
-            console.time "Job #{jobId} IPFS add"
+            console.timeEnd "Job #{jobId} IPFS add"
             console.timeEnd "Job #{jobId} total"
             return callback err if err
             callback null, hash
