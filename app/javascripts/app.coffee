@@ -55,4 +55,8 @@ window.onload = ->
       return
     accounts = accs
     account = accounts[0]
+
+    Pudding.defaults({
+      gas: 3141592 # XXX: if this is not sent then we run out of gas??
+    })
     refreshJobs()
