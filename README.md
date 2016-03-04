@@ -62,11 +62,10 @@ The `Job`verifies the result, and assuming it was correct, credits the `Agent`.
 
 Proof-of-concept
 
-* Something which posts jobs to Ethereum (MsgFlo participant?)
-* Initial JS interface definition for worker plugins
-* Something which listens to new jobs on Ethereum JobAgency, and performs them.
-* Something that waits for completed jobs (MsgFlo participant?)
-* Some example application, which has some code+data up on IPFS, uses this to compute things
+* Contract and UI should support waiting for and getting job results
+* Perform a test on testnet
+* node.js code for posting jobs and waiting for results
+* Add some example application(s), which has some code+data up on IPFS, uses this to compute things
 
 Solving capable
 
@@ -89,6 +88,9 @@ Distributed ready
 
 ## Done
 
+* [dapp webui](./app/javascript/app.coffee) can post jobs to agency
+* [worker](./src/worker.coffee) can listen for jobs and execute them
+* Posting and performing jobs tested with TestRPC virtual network
 * Initial [Ethereum/Solidity contract](./contracts/JobAgency.sol) for a job agency
 * Initial [IPFS components for NoFlo](http://github.com/noflo/noflo-ipfs)
 
