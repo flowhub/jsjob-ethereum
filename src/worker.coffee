@@ -8,6 +8,7 @@ debug = require('debug')('jobjs:worker')
 
 Runner = require './runner'
 ipfs = require './ipfs'
+isIpfs = require 'is-ipfs'
 
 class Worker
   constructor: (@options = {}) ->
@@ -81,6 +82,8 @@ class Worker
     }).nodeify(callback)
 
   getIpfsContents: (hash, callback) ->
+    unless isIpfs.multihash hash
+      return callback new Error "#{hash} is not a valid IPFS multihash"
     @ipfs.cat hash, (err, data) ->
       return callback err if err
       contents = ''
@@ -109,6 +112,8 @@ class Worker
         protocol: gatewayUrl.protocol
         host: gatewayUrl.host
         pathname: "/ipfs/#{job.code}"
+      unless isIpfs.url codeUrl
+        return callback new Error "#{codeUrl} is not a valid IPFS URL"
 
       console.time "Job #{jobId} IPFS cat"
       @getIpfsContents job.input, (err, contents) =>
