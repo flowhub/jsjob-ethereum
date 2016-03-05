@@ -103,6 +103,10 @@ class Worker
         return callback new Error "No results for IPFS add"
       callback null, res[0].Hash
 
+  completeJob: (jobId, resultHash, callback) ->
+    @agency.completeJob(jobId, ipfs.toHex(resultHash))
+      .nodeify callback
+
   runJob: (jobId, callback) ->
     console.time "Job #{jobId} total"
     @getJobData jobId, (err, job) =>
@@ -134,30 +138,38 @@ class Worker
           return callback err if err
           resultData = j?.html or j
           console.time "Job #{jobId} IPFS add"
-          @setIpfsContents resultData, (err, hash) ->
+          @setIpfsContents resultData, (err, hash) =>
             console.timeEnd "Job #{jobId} IPFS add"
             console.timeEnd "Job #{jobId} total"
             return callback err if err
-            callback null, hash
+            @completeJob jobId, hash, (err) =>
+              return callback if err
+              return callback null, hash
 
   start: (callback) ->
     @startRunner (err) =>
       return callback err if err
-      @loadContracts (err, contracts) =>
-        console.log err, contracts
-        return callback err if err
-        if @options.agency
-          @agency = contracts.JobAgency.at @options.agency
-        else
-          @agency = contracts.JobAgency.deployed()
-        console.log 'JobAgency address:', @agency.address
-        @subscribeAgency @agency, (err, jobId) =>
-          @runJob jobId, (err, result) =>
-            if err
-              console.log "ERROR", err
-              process.exit 1
 
-            console.log result
+      @web3.eth.getAccounts (err, accs) =>
+        Pudding.defaults({
+          from: accs[0],
+          gas: 3141592 # XXX: if this is not sent then we run out of gas??
+        })
+        @loadContracts (err, contracts) =>
+          console.log err, contracts
+          return callback err if err
+          if @options.agency
+            @agency = contracts.JobAgency.at @options.agency
+          else
+            @agency = contracts.JobAgency.deployed()
+          console.log 'JobAgency address:', @agency.address
+          @subscribeAgency @agency, (err, jobId) =>
+            @runJob jobId, (err, result) =>
+              if err
+                console.log "ERROR", err
+                process.exit 1
+
+              console.log result
 
   stop: (callback) ->
     @agencyWatcher.stopWatching() if @agencyWatcher
