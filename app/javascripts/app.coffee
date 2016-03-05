@@ -20,16 +20,21 @@ setStatus = (message) ->
 
 refreshJobs = ->
   agency = JobAgency.deployed()
-  agency.getLastJobId.call(from: account).then((value) ->
+  agency.getLastJobId.call(from: account)
+  .then (value) ->
+    console.log 'v', value
+    jobId = value.toNumber()
     balance_element = document.getElementById('jobs')
-    balance_element.innerHTML = value.valueOf()
-  ).catch (e) ->
+    balance_element.innerHTML = (jobId+1).valueOf()
+    return jobId
+  .catch (e) ->
     console.log e
     setStatus 'Error getting balance; see log.'
 
 updateIpfs = ->
   codeHash = document.getElementById('codehash').value
   inputHash = document.getElementById('inputhash').value
+
   inputHashPreview = document.getElementById('inputhash_preview')
   # TODO: plug in https://github.com/xicombd/is-ipfs for validation
 
@@ -38,6 +43,7 @@ updateIpfs = ->
   inputHashPreview.href = "#{ipfsGateway}#{inputHash}"
   codeHashPreview = document.getElementById('codehash_preview')
   codeHashPreview.href = "#{ipfsGateway}#{codeHash}"
+
 
   return values =
     code: codeHash
@@ -49,17 +55,53 @@ window.postJob = ->
 
   values = updateIpfs()
 
-  setStatus 'Starting jobposting transaction... (please wait)'
+  setStatus 'Posting job... (please wait)'
+  for e in document.getElementsByClassName('results')
+    e.className = "results hide"
 
   console.log 'job data', values.input, values.code
   agency.postJob(toHex(values.code), toHex(values.input), from: account)
-  .then(->
+  .then (tx) ->
     setStatus 'Job posted!'
     refreshJobs()
-  ).catch (e) ->
+  .then (id) ->
+    console.log 'posted', id
+    Promise.promisify(waitForResult)(agency, id)
+  .then (result) ->
+    setStatus 'Got job result!!'
+    console.log 's'
+    resultHash = document.getElementById('resulthash')
+    resultHashPreview = document.getElementById('resulthash_preview')
+    resultHash.value = result
+    resultHashPreview.href = "#{ipfsGateway}#{result}"
+    for e in document.getElementsByClassName('results')
+      e.className = "results show"
+    return result
+  .catch (e) ->
     console.log e
     console.log e.stack
-    setStatus 'Error sending coin: ' + e.message
+    setStatus 'Error posting job: ' + e.message
+
+waitForResult = (agency, requestedJobId, callback) ->
+  events = []
+  transaction = null
+
+  checkEvents = () ->
+    for e in events
+        jobId = e?.args?.jobId.toNumber()
+        if jobId == requestedJobId && e.event == 'JobCompleted'
+            agency.getJobResult.call(jobId)
+            .then (r) ->
+              return toStr(r)
+            .nodeify(callback)
+            return true
+    return false
+
+  e = agency.JobCompleted()
+  e.watch (err, event) ->
+    #console.log 'event', err, event?.transactionHash, event?.args?.jobId.toString()
+    events.push event
+    e.stopWatching() if checkEvents()
 
 window.onload = ->
   codeHashInput = document.getElementById('codehash')
@@ -67,6 +109,7 @@ window.onload = ->
   inputHashInput = document.getElementById('inputhash')
   inputHashInput.addEventListener 'change', updateIpfs
   do updateIpfs
+
   web3.eth.getAccounts (err, accs) ->
     if err != null
       alert 'There was an error fetching your accounts.'

@@ -46,3 +46,10 @@ h3 {
 #balance {
   color: black;
 }
+
+.results.hide {
+    opacity: 0;
+}
+.results.show {
+    opacity: 1;
+}
