@@ -22,9 +22,16 @@ Bandwidth and disk intensive.
 
 ## Status
 
-*Proof-of-concept*. See TODO section
+**Proof-of-concept**. Can distribute jobs through Ethereum blockchain
+that can be picked up by workers and executed in browser sandbox
 
-**Note: some of this will be moved into its own open source project when we know what the pieces are.**
+* [Ethereum contract](./contracts/JobAgency.sol) is quick&dirty, absolutely **no security** features
+* Input, code and results are distributed using IPFS
+* [dapp webui](./app/javascript/app.coffee) and [nodejs CLI tool](./worker/postjob) can post jobs to agency
+* [worker](./src/worker.coffee) can listen for jobs and execute them (in PhantomJS)
+* Tested with TestRPC virtual network, and go-ethereum on Morden testnet
+
+See TODO section
 
 ## Installing
 
@@ -97,10 +104,11 @@ The `Job`verifies the result, and assuming it was correct, credits the `Agent`.
 
 Proof-of-concept
 
-* Contract and UI should support waiting for and getting job results
-* Perform a test on testnet
-* node.js code for posting jobs and waiting for results
-* Add some example application(s), which has some code+data up on IPFS, uses this to compute things
+* Split off the runner code into its own project/repository
+* Add testcases, including one for the "polyfill" feature
+* Add some example application(s),
+which has some code+data up on IPFS, uses this to compute things
+* Document and publish blogpost(s)
 
 Solving capable
 
@@ -121,13 +129,6 @@ Distributed ready
 * Ready-to-run SD card image for Rasperry Pi
 * Worker included in TheGrid client(s)
 
-## Done
-
-* [dapp webui](./app/javascript/app.coffee) can post jobs to agency
-* [worker](./src/worker.coffee) can listen for jobs and execute them
-* Posting and performing jobs tested with TestRPC virtual network
-* Initial [Ethereum/Solidity contract](./contracts/JobAgency.sol) for a job agency
-* Initial [IPFS components for NoFlo](http://github.com/noflo/noflo-ipfs)
 
 ## Security
 
