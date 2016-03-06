@@ -104,7 +104,6 @@ The `Job`verifies the result, and assuming it was correct, credits the `Agent`.
 
 Proof-of-concept
 
-* Split off the runner code into its own project/repository
 * Add testcases, including one for the "polyfill" feature
 * Add some example application(s),
 which has some code+data up on IPFS, uses this to compute things
