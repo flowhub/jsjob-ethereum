@@ -6,7 +6,7 @@ Ipfs = require 'ipfs-api'
 url = require 'url'
 debug = require('debug')('jobjs:worker')
 
-Runner = require './runner'
+jsjob = require 'jsjob'
 ipfs = require './ipfs'
 isIpfs = require 'is-ipfs'
 
@@ -32,7 +32,7 @@ class Worker
     @preparePudding()
     @prepareIpfs()
     @seenJobIds = []
-    @runner = new Runner @options.runner
+    @runner = new jsjob.Runner @options.runner
 
   preparePudding: ->
     @web3 = new Web3()
@@ -133,7 +133,7 @@ class Worker
         jobOptions = {}
 
         console.time "Job #{jobId} run"
-        @runner.performJob codeUrl, inputData, jobOptions, (err, j) =>
+        @runner.runJob codeUrl, inputData, jobOptions, (err, j) =>
           console.timeEnd "Job #{jobId} run"
           return callback err if err
           resultData = j?.html or j
