@@ -159,5 +159,5 @@ For some small, randomized portion of the jobs. "ticket control"
 
 * [Ethereum computation market](https://github.com/pipermerriam/ethereum-computation-market)
 * [From Smart Contracts to Courts with not so Smart Judges](https://blog.ethereum.org/2016/02/17/smart-contracts-courts-not-smart-judges/).
-
+* [Ethereum and oracles](https://blog.ethereum.org/2014/07/22/ethereum-and-oracles/)
 
