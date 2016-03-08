@@ -1,4 +1,4 @@
-# JsJob Etereum
+# JsJob Ethereum
 
 *Experiment* in building a computational market on [Ethereum blockchain](https://ethereum.org),
 using out-of-chain execution of JavaScript in browser-sandbox using [JsJob](https://github.com/the-grid/jsjob),

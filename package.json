@@ -1,5 +1,5 @@
 {
-  "name": "jsjob-etereum",
+  "name": "jsjob-ethereum",
   "version": "0.0.1",
   "description": "Distributed computational market for JavaScript for Etereum",
   "main": "index.js",
