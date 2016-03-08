@@ -176,7 +176,16 @@ class Worker
     @agencyWatcher = null
     @runner.stop callback
 
-exports.main = main = (options) ->
+parse = () ->
+  contract = process.argv[process.argv.length - 1];
+  if contract.substr(0, 2) != '0x'
+    contract = null
+  options =
+    agency: contract
+  return options
+
+exports.main = main = () ->
+  options = parse()
   w = new Worker options
   w.start (err) ->
     if err

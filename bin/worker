@@ -1,9 +1,3 @@
 #!/usr/bin/env node
-var contract = process.argv[process.argv.length - 1];
-if (contract.substr(0, 2) !== '0x') {
-  contract = null;
-}
 require('coffee-script/register');
-require('../src/worker').main({
-  agency: contract
-});
+require('../src/worker').main();
