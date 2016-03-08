@@ -113,15 +113,18 @@ The `Job`verifies the result, and assuming it was correct, credits the `Agent`.
 
 Proof-of-concept
 
+* Unhardcode script/polyfill
+* Unhardcode accounts used
 * Add end2end tests
 * Add some example application(s),
 which has some code+data up on IPFS, uses this to compute things
 * Document and publish blogpost(s)
+* Support options data as part of job?
 
 Production ready
 
-* Tested a lot on the testnet
 * Defined & implemented basic security strategy
+* Tested a lot on the testnet
 * Integration point for, and existance of, functional tests of results
 * A way to tune Ethereum/centralized work-balance (manual or automated)
 

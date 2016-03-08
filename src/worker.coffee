@@ -23,6 +23,7 @@ class Worker
     # FIXME: Default should be 8080?
     @options.ipfs.gateway = 'http://localhost:8090' unless @options.ipfs.gateway
 
+    # FIXME: unhardcode the script
     @options.runner =
       scripts: [
         "window.jsJobRun = function(d, o, cb) { window.polySolvePage(d, o, cb) };"
