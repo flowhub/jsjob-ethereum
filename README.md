@@ -1,37 +1,46 @@
-# TheGrid dapp
+# JsJob Etereum
 
-*Skynet for webdesigners*
-
-![Rise of the Dapp](http://gateway.ipfs.io/ipfs/QmaZDEQB4LrT7CQzEtAfKCDHrqsAgKfdig96QrV7rbNMJw)
+*Experiment* in building a computational market on [Ethereum blockchain](https://ethereum.org),
+using out-of-chain execution of JavaScript in browser-sandbox using [JsJob](https://github.com/the-grid/jsjob),
+and distributed data storage on [IPFS](https://ipfs.io/).
 
 ## Motivation
 
-A primarily decentralized approach has following benefits
+As of 2016, the conventional approach to large-scale, compute-intensive services is:
+
+* Persist data in a relational or NoSQL database
+* Farm out compute work using a message broker like RabbitMQ
+* Server code exposing an HTTP API
+* Clients provide user interface(s) on top of this api
+* Deploy it in a private network at some cloud provider
+
+This works, and there exists lots of best-practice around building an maintaining such a service.
+However it is a heavily centralized solution, with associated drawbacks.
+
+A primarily decentralized approach may have following benefits:
 
 * Increased robustness from service disruption due to failure in central providers (Heroku/AWS)
-* Potential of cost savings, by reducing friction in participantion,
-and externalizing computational costs to users and volunteers
-* Avoids single actors (like a local government and/or ISP) being able to take service away from users
+* Avoids single actors being able to take service away from users (like a local government and/or ISP).
+Service may even be maintained independently of the initial creator.
+* Geographical distribution of the service does not require. May give better performance for (some) users
+* Potential of cost savings, by enabling small-scale participation with reducing friction.
+Some users and volunteers may be willing to take some of the costs, possibly due to improved service quality,
+or because they are able to externalize it. Like free/sunk electricity or compute equipment costs.
+* Derivative, spin-off and value-add services are more incentivized because of less central control
 
-As a AI-based, website producing entity, there are primarily two aspects to decentralize:
-
-* Production of new webpages from content (content analysis, and page solving).
-CPU intensive.
-* Serving webpages to site visitors.
-Bandwidth and disk intensive.
 
 ## Status
 
-**Proof-of-concept**. Can distribute jobs through Ethereum blockchain
-that can be picked up by workers and executed in browser sandbox
+**Proof-of-concept**. Can distribute jobs through Ethereum blockchain that can be picked up by workers and executed in browser sandbox.
+There is **no reward payments** and **no security** implemented, and only tested on non-production network and data.
 
-* [Ethereum contract](./contracts/JobAgency.sol) is quick&dirty, absolutely **no security** features
+* [Ethereum contract](./contracts/JobAgency.sol) is quick&dirty
 * Input, code and results are distributed using IPFS
 * [dapp webui](./app/javascript/app.coffee) and [nodejs CLI tool](./worker/postjob) can post jobs to agency
 * [worker](./src/worker.coffee) can listen for jobs and execute them (in PhantomJS)
 * Tested with TestRPC virtual network, and go-ethereum on Morden testnet
 
-See TODO section
+See the `TODO` section for milestones and next steps.
 
 ## Installing
 
@@ -47,8 +56,8 @@ Run tests
 
     npm test
 
-We use the [truffle](https://github.com/ConsenSys/truffle) framework, accessed wrapper `./truffle` script.
-Refer to their documentation for more interesting testcases.
+We use the [truffle](https://github.com/ConsenSys/truffle) framework, accessed through wrapper `./truffle` script.
+Refer to their documentation for more details on usage.
 
 ## Deploying a JobAgency
 
@@ -87,7 +96,7 @@ Alternatively, use the CLI tool:
 
 ## Architecture
 
-Components
+Parts
 
 * Job: input data (IPFS hash), code (IPFS hash, to some JavaScript), result (IPFS hash).
 * Agency: Posts new `Job`s, by logging them
@@ -104,36 +113,30 @@ The `Job`verifies the result, and assuming it was correct, credits the `Agent`.
 
 Proof-of-concept
 
-* Add testcases, including one for the "polyfill" feature
+* Add end2end tests
 * Add some example application(s),
 which has some code+data up on IPFS, uses this to compute things
 * Document and publish blogpost(s)
-
-Solving capable
-
-* Remove database access from Solve worker
-* Port Poly to use the defined worker plugin interface
 
 Production ready
 
 * Tested a lot on the testnet
 * Defined & implemented basic security strategy
-* Functional tests of solve outputs
-* Integration on apis
-* Dial to tune Eth/Heroku work-balance (manual or automated)
+* Integration point for, and existance of, functional tests of results
+* A way to tune Ethereum/centralized work-balance (manual or automated)
 
 Distributed ready
 
 * Docker images available, ready-to-run on x86 cloud/home server
 * Ready-to-run SD card image for Rasperry Pi
-* Worker included in TheGrid client(s)
+* Worker ready-to-include in browser/mobile applications
 
 
 ## Security
 
-`Brainstorming here...`
+### Threat model
 
-Attacker returning bad results could
+In the case of producing webpages, an attacker returning bad results could for instance:
 
 * Put ads on pages
 * Put in obscene content
@@ -144,15 +147,20 @@ Attacks can also happen by attacking the contracts themselves.
 This could allow to bypass security mechanisms to perform any of the above,
 as well as steal the Ether currently in the system.
 
-Potential mechanisms
+This means fairly interesting for attackers with finanical, political and fame motivations.
 
-* Functional verification (tests) of results
+
+### Potential mechanisms
+
+* Functional verification (tests) of results.
 * Trusted workers replicating the work, comparing it.
 For some small, randomized portion of the jobs. "ticket control"
-* Reputation system. May still be open for [Sybil attack](https://en.wikipedia.org/wiki/Sybil_attack)
-* Require a deposit, for punishment in case of bad/contested results.
+* Reputation system. Note, may still be open for [Sybil attack](https://en.wikipedia.org/wiki/Sybil_attack)
 * Withholding payout of performed work until a lot of work is verified
-* User design review of output, before it goes live
+* Require a deposit, for punishment in case of bad/contested results.
+* User review/approval of output, exposed to visitors
+* Not allow executable code (at least not Turing complete) in results.
+For websites, maybe [AMP HTML](https://www.ampproject.org/)? Media embedding (iframe, images) is also a vector.
 
 
 ## Related work
