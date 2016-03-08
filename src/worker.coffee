@@ -16,7 +16,6 @@ class Worker
     @options.ethereum.rpc = 'http://localhost:8545' unless @options.ethereum.rpc
     @options.ethereum.contractsDir = './environments/development/contracts' unless @options.ethereum.contractsDir
 
-    console.log @options
     @agency = null
 
     @options.ipfs = {} unless @options.ipfs
@@ -110,7 +109,6 @@ class Worker
   runJob: (jobId, callback) ->
     console.time "Job #{jobId} total"
     @getJobData jobId, (err, job) =>
-      console.log 'job', jobId, job
 
       # FIXME: get from IPFS
       gatewayUrl = url.parse @options.ipfs.gateway
@@ -156,7 +154,6 @@ class Worker
           gas: 3141592 # XXX: if this is not sent then we run out of gas??
         })
         @loadContracts (err, contracts) =>
-          console.log err, contracts
           return callback err if err
           if @options.agency
             @agency = contracts.JobAgency.at @options.agency
