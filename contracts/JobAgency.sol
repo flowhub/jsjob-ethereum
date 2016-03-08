@@ -14,9 +14,9 @@ contract JobAgency {
   event JobPosted(uint jobId);
   event JobCompleted(uint jobId);
 
-	function JobAgency() {
+  function JobAgency() {
 
-	}
+  }
 
   function getLastJobId() returns(int jobid) {
     return int256(jobs.length)-1;
@@ -54,7 +54,7 @@ contract JobAgency {
     JobPosted(jobId);
 
     return jobs.length;
-	}
+  }
 
   // TODO: support errors and result details/metadata
   // FIXME: actually restrict who/what can be results.
@@ -62,7 +62,7 @@ contract JobAgency {
   function completeJob(uint id, byte[46] result) {
     var job = jobs[id];
     if (job.completed) { // precondition: can only be completed once:
-        throw;
+      throw;
     }
     job.result = result;
     job.completed = true;
