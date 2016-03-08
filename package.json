@@ -1,7 +1,7 @@
 {
-  "name": "thegrid-dapp",
+  "name": "jsjob-etereum",
   "version": "0.0.1",
-  "description": "Ethereum experiements",
+  "description": "Distributed computational market for JavaScript for Etereum",
   "main": "index.js",
   "dependencies": {
     "bluebird": "^3.3.3",
@@ -23,12 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/the-grid/dapp.git"
+    "url": "git+https://github.com/the-grid/jsjob-ethereum.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/the-grid/dapp/issues"
+    "url": "https://github.com/the-grid/jsjob-ethereum/issues"
   },
-  "homepage": "https://github.com/the-grid/dapp#readme"
+  "homepage": "https://github.com/the-grid/jsjob-ethereum#readme"
 }
