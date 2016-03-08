@@ -15,7 +15,7 @@ As of 2016, the conventional approach to large-scale, compute-intensive services
 * Deploy it in a private network at some cloud provider
 
 This works, and there exists lots of best-practice around building an maintaining such a service.
-However it is a heavily centralized solution, with associated drawbacks.
+However it is a heavily centralized solution, with associated drawbacks of single controlling entities.
 
 A primarily decentralized approach may have following benefits:
 
