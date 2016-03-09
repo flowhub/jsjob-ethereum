@@ -163,7 +163,7 @@ For some small, randomized portion of the jobs. "ticket control"
 * Require a deposit, for punishment in case of bad/contested results.
 * User review/approval of output, exposed to visitors
 * Not allow executable code (at least not Turing complete) in results.
-For websites, maybe [AMP HTML](https://www.ampproject.org/)? Media embedding (iframe, images) is also a vector.
+For websites, maybe [AMP HTML](https://www.ampproject.org/)? Media embedding (iframe, images) is also a vector, though potentially mitigated by comparing to media sources in input data.
 
 
 ## Related work
