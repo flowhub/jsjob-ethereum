@@ -1,5 +1,7 @@
 # JsJob Ethereum
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/flowhub/jsjob-ethereum.svg)](https://greenkeeper.io/)
+
 *Experiment* in building a computational market on [Ethereum blockchain](https://ethereum.org),
 using out-of-chain execution of JavaScript in browser-sandbox using [JsJob](https://github.com/the-grid/jsjob),
 and distributed data storage on [IPFS](https://ipfs.io/).
